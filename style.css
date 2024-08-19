@@ -65,17 +65,31 @@ button:hover {
 ul li {
   list-style: none;
   font-size: 30pt;
+  background-color: #ffb3c6;
+  border-radius: 25px;
   color: white;
-  padding: 12px 8px 12px 50px;
+  padding: 10px;
   user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative; /* Added this line */
 }
 
-ul li.completed span {
-  text-decoration: line-through;
-  color: hsl(345, 100%, 85%);
+ul li::after {
+  content: '';
+  height: 3px;
+  width: 0;
+  background: #ffffff;
+  position: absolute;
+  left: 0;
+  bottom: 50%; /* Adjusted this line to align the strikethrough */
+  transition: width 0.5s;
+  transform: translateY(50%); /* Center the line vertically */
+}
+
+ul li.completed::after {
+  width: 100%;
 }
 
 .complete-btn {
