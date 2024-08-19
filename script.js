@@ -3,14 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskList = document.getElementById('taskList');
 
   function addTask() {
-    const taskText = taskInput.value.trim();
+    const taskValue = taskInput.value.trim();
     
-    if (taskText === '') return; // Prevent adding empty tasks
+    if (taskValue === '') return; // Prevent adding empty tasks
 
     const li = document.createElement('li');
-    const taskSpan = document.createElement('span');
-    taskSpan.textContent = taskText;
-    li.appendChild(taskSpan);
+    const taskContainer = document.createElement('div');
+
+    const taskText = document.createElement('h3')
+    taskText.textContent = taskValue;
+
+    taskContainer.appendChild(taskText);
 
     // Create Complete button
     const completeButton = document.createElement('button');
@@ -18,11 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
     completeButton.classList.add('complete-btn');
     completeButton.addEventListener('click', () => {
       li.classList.toggle('completed');
+      
+      if (completeButton.textContent == 'Complete') {
+        completeButton.textContent = 'Undo';
+      } else {
+        completeButton.textContent = 'Complete';
+      }
     });
 
     // Add the complete button to the list item
-    li.appendChild(completeButton);
+    taskContainer.appendChild(completeButton);
     
+    li.appendChild(taskContainer)
     taskList.appendChild(li);
     taskInput.value = ''; // Clear input field
   }
