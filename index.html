@@ -7,14 +7,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="list">
-    <h2>To-do List</h2>
-    <div class="row">
-      <input type="text" id="taskInput" placeholder="something to do for later">
-      <button type="submit" onclick="addTask()">Add</button>
-    </div>
-    <ul id="taskList"></ul>
+  <h1>To-do List</h1>
+  <div class="wrapper">
+    <form spellcheck="false">
+      <input type="text" id="todo-input" placeholder="something to do for later" autocomplete="off">
+      <button id="add-button">Add</button>
+    </form>
+    <ul id="todo-list">
+    </ul>
   </div>
-  <script src="script.js"></script>
+
+  <script src="script.js" defer></script>
 </body>
 </html>

@@ -1,48 +1,76 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const taskInput = document.getElementById('taskInput');
-  const taskList = document.getElementById('taskList');
+const todoForm = document.querySelector('form');
+const todoInput = document.getElementById('todo-input');
+const todoListUL = document.getElementById('todo-list');
 
-  function addTask() {
-    const taskValue = taskInput.value.trim();
-    
-    if (taskValue === '') return; // Prevent adding empty tasks
+let allTodos = getTodos();
+updateTodoList();
 
-    const li = document.createElement('li');
-    const taskContainer = document.createElement('div');
+todoForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  addTodo();
+})
 
-    const taskText = document.createElement('h3')
-    taskText.textContent = taskValue;
-
-    taskContainer.appendChild(taskText);
-
-    // Create Complete button
-    const completeButton = document.createElement('button');
-    completeButton.textContent = 'Complete';
-    completeButton.classList.add('complete-btn');
-    completeButton.addEventListener('click', () => {
-      li.classList.toggle('completed');
-      
-      if (completeButton.textContent == 'Complete') {
-        completeButton.textContent = 'Undo';
-      } else {
-        completeButton.textContent = 'Complete';
-      }
-    });
-
-    // Add the complete button to the list item
-    taskContainer.appendChild(completeButton);
-    
-    li.appendChild(taskContainer)
-    taskList.appendChild(li);
-    taskInput.value = ''; // Clear input field
-  }
-
-  // Add task when Enter key is pressed
-  taskInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      addTask();
+function addTodo(){
+  const todoText = todoInput.value.trim();
+  if (todoText.length > 0) {
+    const todoObject = {
+      text: todoText,
+      completed: false
     }
-  });
+    allTodos.push(todoObject);
+    updateTodoList();
+    saveTodos();
+    todoInput.value = ""; 
+  }
+}
 
-  window.addTask = addTask; // Expose addTask to global scope
-});
+function updateTodoList() {
+  todoListUL.innerHTML = "";
+  allTodos.forEach((todo, todoIndex)=>{
+    todoItem = createTodoItem(todo, todoIndex);
+    todoListUL.append(todoItem);
+  })
+}
+
+function createTodoItem(todo, todoIndex){
+  const todoId = 'todo-'+todoIndex;
+  const todoLI = document.createElement("li");
+  const todoText = todo.text;
+  todoLI.className = 'todo';
+  todoLI.innerHTML = `
+        <input type="checkbox" id="${todoId}">
+        <label class='custom-checkbox' for="${todoId}"><svg fill="transparent" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></label>
+
+        <label for="${todoId}" class="todo-text">
+          ${todoText}
+        </label>
+
+        <button class="delete-button">
+          <svg fill="var(--accent-color)" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+        </button>
+  `
+  const deleteButton = todoLI.querySelector('.delete-button');
+  deleteButton.addEventListener('click', ()=>{
+    deleteTodoItem(todoIndex);
+  })
+  const checkbox = todoLI.querySelector('input');
+  checkbox.addEventListener('change', ()=>{
+    allTodos[todoIndex].completed = checkbox.checked;
+    saveTodos();
+  })
+  checkbox.checked = todo.completed;
+  return todoLI;
+}
+function deleteTodoItem(todoIndex){
+  allTodos = allTodos.filter((_, i)=> i !== todoIndex);
+  saveTodos();
+  updateTodoList();
+}
+function saveTodos(){
+  const todosJson = JSON.stringify(allTodos);
+  localStorage.setItem('todos', todosJson);
+}
+function getTodos(){
+  const todos = localStorage.getItem('todos') || '[]';
+  return JSON.parse(todos);
+}
